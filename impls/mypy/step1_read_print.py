@@ -1,17 +1,19 @@
 import sys, traceback
 import mal_readline
+import reader
+import printer
 
 # read
 def READ(str):
-    return str
+    return reader.read_str(str)
 
 # eval
-def EVAL(ast):
+def EVAL(ast, env):
         return ast
 
 # print
 def PRINT(exp):
-    return exp
+    return printer.pr_str(exp)
 
 # repl
 def REP(str):
