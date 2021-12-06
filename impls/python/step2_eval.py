@@ -30,8 +30,9 @@ def eval_ast(ast, env):
 def EVAL(ast, env):
         #print("EVAL %s" % printer._pr_str(ast))
         if not types._list_Q(ast):
+            print('not a list', ast, type(ast))
             return eval_ast(ast, env)
-
+        print('ast', ast)
         # apply list
         if len(ast) == 0: return ast
         el = eval_ast(ast, env)

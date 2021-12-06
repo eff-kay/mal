@@ -20,7 +20,8 @@ class Reader():
 
 def tokenize(str):
     tre = re.compile(r"""[\s,]*(~@|[\[\]{}()'`~^@]|"(?:[\\].|[^\\"])*"?|;.*|[^\s\[\]{}()'"`@,;]+)""");
-    return [t for t in re.findall(tre, str) if t[0] != ';']
+    tokens = [t for t in re.findall(tre, str) if t[0] != ';']
+    return tokens
 
 def _unescape(s):
     return s.replace('\\\\', _u('\u029e')).replace('\\"', '"').replace('\\n', '\n').replace(_u('\u029e'), '\\')
@@ -32,7 +33,9 @@ def read_atom(reader):
     token = reader.next()
     if re.match(int_re, token):     return int(token)
     elif re.match(float_re, token): return int(token)
-    elif re.match(string_re, token):return _s2u(_unescape(token[1:-1]))
+    elif re.match(string_re, token):
+        print('value ', token)
+        return _s2u(_unescape(token[1:-1]))
     elif token[0] == '"':           raise Exception("expected '\"', got EOF")
     elif token[0] == ':':           return _keyword(token[1:])
     elif token == "nil":            return None
@@ -71,7 +74,10 @@ def read_form(reader):
         return None
     elif token == '\'':
         reader.next()
-        return _list(_symbol('quote'), read_form(reader))
+        token_list = _list(_symbol('quote'), read_form(reader))
+        print('token list', token_list)
+        return token_list
+
     elif token == '`':
         reader.next()
         return _list(_symbol('quasiquote'), read_form(reader))
@@ -99,10 +105,10 @@ def read_form(reader):
 
     # hash-map
     elif token == '}': raise Exception("unexpected '}'");
-    elif token == '{': return read_hash_map(reader);
+    elif token == '{': return read_hash_map(reader)
 
     # atom
-    else:              return read_atom(reader);
+    else:              return read_atom(reader)
 
 def read_str(str):
     tokens = tokenize(str)
